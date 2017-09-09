@@ -15,6 +15,9 @@ public class Car {
     private int numPeople;
 
     Car(String carID) {
+        if (carID == null) {
+            throw new IllegalArgumentException("Car ID cannot be null");
+        }
         this.carID = carID;
         this.numPeople = -1;
     }
@@ -61,6 +64,9 @@ public class Car {
         if (noiseLevelDecibels > 25000) {
             result = "very loud";
         }
+        if (noiseLevelDecibels > 30000) {
+            result = "extremely loud";
+        }
         return result;
     }
 
@@ -80,5 +86,27 @@ public class Car {
             result.append(" decibels)");
         }
         return result.toString();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        // self check
+        if (this == o) {
+            return true;
+        }
+        // null check
+        if (o == null) {
+            return false;
+        }
+        // type check and cast
+        if (getClass() != o.getClass()) {
+            return false;
+        }
+        return this.carID.equals(((Car) o).getCarID());
+    }
+
+    @Override
+    public int hashCode() {
+        return carID.hashCode();
     }
 }
