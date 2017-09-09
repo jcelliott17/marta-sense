@@ -15,10 +15,22 @@
         app:layout_constraintTop_toTopOf="parent" >
 
         <Switch
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="Share Noise Level"
-            android:id="@+id/share_noise_level_switch"/>
+            android:id="@+id/share_noise_level_switch"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:thumbTextPadding="40dp"
+            android:layout_centerHorizontal="true"
+            android:padding="25dp"
+            android:switchPadding="10dp"/>
+
+        <ListView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/car_list_view"
+            android:layout_below="@+id/share_noise_level_switch"></ListView>
     </RelativeLayout>
 
 

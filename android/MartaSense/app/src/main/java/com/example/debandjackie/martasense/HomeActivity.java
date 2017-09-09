@@ -6,13 +6,18 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
+import android.widget.ListView;
 import android.widget.Switch;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -30,6 +35,9 @@ public class HomeActivity extends AppCompatActivity {
     private static final int SOUND_REQUEST_CODE = 773;
     private boolean canRecordSound;
 
+    private List<String> carList;
+    private ListView carListView;
+
     private Switch shareNoiseLevelSwitch;
 
     @Override
@@ -40,10 +48,25 @@ public class HomeActivity extends AppCompatActivity {
         thisCarNoiseReference = database.getReference().child("cars").child(THIS_CAR_ID).child("noise-level");
         thisCarNoiseReference.setValue("jackie-test");
 
+        carListView = (ListView) findViewById(R.id.car_list_view);
+        carList = new ArrayList<>();
+
+        carList.add("Car1");
+        carList.add("Car2");
+
+        final ArrayAdapter<String> arrayAdapter =
+                new ArrayAdapter<>(this,android.R.layout.simple_list_item_1 , carList);
+
+        carListView.setAdapter(arrayAdapter);
+
         shareNoiseLevelSwitch = (Switch) findViewById(R.id.share_noise_level_switch);
         shareNoiseLevelSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                carList.add("New Car" + new Random().nextInt());
+                carList.remove(1);
+                Log.e("ADDED_A_NEW_CAR", "TRUE");
+                arrayAdapter.notifyDataSetChanged();
                 canRecordSound = b;
                 if (canRecordSound) {
                     requestSoundReporting();
@@ -53,6 +76,7 @@ public class HomeActivity extends AppCompatActivity {
                 }
             }
         });
+
     }
 
     private void requestSoundReporting() {
@@ -124,4 +148,6 @@ public class HomeActivity extends AppCompatActivity {
             // permissions this app might request
         }
     }
+
+
 }
