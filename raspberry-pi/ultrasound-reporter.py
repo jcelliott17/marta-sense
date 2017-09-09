@@ -52,6 +52,9 @@ ECHO = 24
 
 TRIGGER_LED = 8
 
+CYCLE_BUTTON = 12
+cycle_button_state = True;
+
 print "Distance Measurement In Progress"
 
 GPIO.setup(TRIG,GPIO.OUT)
@@ -61,6 +64,8 @@ GPIO.setup(ECHO,GPIO.IN)
 GPIO.output(TRIG, False)
 
 GPIO.setup(TRIGGER_LED,GPIO.OUT)
+
+GPIO.setup(CYCLE_BUTTON,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 print "Waiting For Sensor To Settle"
 
@@ -77,6 +82,7 @@ while True:
     time.sleep(0.00001)
 
     GPIO.output(TRIG, False)
+
 
     while GPIO.input(ECHO)==0:
 
@@ -101,6 +107,17 @@ while True:
             GPIO.output(TRIGGER_LED,GPIO.LOW)
 
     print "Distance:",distance,"cm"
+
+    
+    new_cycle_button_state = GPIO.input(CYCLE_BUTTON)
+    if cycle_button_state and cycle_button_state != new_cycle_button_state:
+        this_car_num = ((this_car_num + 1) % 6) + 1
+        this_car_id = "Car " + str(this_car_num)
+        print "Switched to " + this_car_id
+        carCount = 0
+        GPIO.output(SUCCESS_LED,GPIO.LOW)
+        time.sleep(1)
+        GPIO.output(SUCCESS_LED,GPIO.HIGH)
 
     previousDistance = distance
 
