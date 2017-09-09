@@ -257,5 +257,8 @@ public class HomeActivity extends AppCompatActivity {
         carArrayAdapter.notifyDataSetChanged();
     }
 
-
+    private void updateCarList(SortCriteria sortCriteria) {
+        this.sortCriteria = sortCriteria;
+        updateCarList();
+    }
 }
