@@ -74,7 +74,7 @@ public class Car {
         if (numPeople >= 0) {
             result.append("\n\nAbout ");
             result.append(numPeople);
-            result.append(" people");
+            result.append(numPeople == 1 ? " person" : " people");
         }
         if (noiseLevelDecibels > 0) {
             result.append("\n\n");

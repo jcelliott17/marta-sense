@@ -22,6 +22,9 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -46,9 +49,16 @@ public class HomeActivity extends AppCompatActivity {
 
     private List<Car> carList;
     private ListView carListView;
+    private ArrayAdapter<Car> carArrayAdapter;
 
     private Switch shareNoiseLevelSwitch;
     private TextView currentCarTextView;
+
+    private enum SortCriteria {
+        NAME, NOISE_LEVEL, NUM_PEOPLE
+    }
+
+    private SortCriteria sortCriteria = SortCriteria.NUM_PEOPLE;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +72,10 @@ public class HomeActivity extends AppCompatActivity {
         carListView = (ListView) findViewById(R.id.car_list_view);
         carList = new ArrayList<>();
 
-        final ArrayAdapter<Car> arrayAdapter =
+        carArrayAdapter =
                 new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, carList);
 
-        carListView.setAdapter(arrayAdapter);
+        carListView.setAdapter(carArrayAdapter);
 
         allCarsReference = database.getReference().child("cars");
         allCarsReference.addChildEventListener(new ChildEventListener() {
@@ -80,7 +90,7 @@ public class HomeActivity extends AppCompatActivity {
                     newCar.setNumPeople(dataSnapshot.child("num-people").getValue(Long.class));
                 }
                 carList.add(newCar);
-                arrayAdapter.notifyDataSetChanged();
+                updateCarList();
             }
 
             @Override
@@ -95,7 +105,7 @@ public class HomeActivity extends AppCompatActivity {
                     newCar.setNumPeople(dataSnapshot.child("num-people").getValue(Long.class));
                 }
                 carList.add(newCar);
-                arrayAdapter.notifyDataSetChanged();
+                updateCarList();
             }
 
             @Override
@@ -125,7 +135,7 @@ public class HomeActivity extends AppCompatActivity {
         shareNoiseLevelSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                arrayAdapter.notifyDataSetChanged();
+                updateCarList();
                 canRecordSound = b;
                 if (canRecordSound) {
                     requestSoundReporting();
@@ -215,6 +225,36 @@ public class HomeActivity extends AppCompatActivity {
             // other 'case' lines to check for other
             // permissions this app might request
         }
+    }
+
+    private void updateCarList() {
+        switch (sortCriteria) {
+            case NAME:
+                Collections.sort(carList, new Comparator<Car>() {
+                    @Override
+                    public int compare(com.example.debandjackie.martasense.Car car1, com.example.debandjackie.martasense.Car car2) {
+                        return car1.getCarID().compareTo(car2.getCarID());
+                    }
+                });
+                break;
+            case NOISE_LEVEL:
+                Collections.sort(carList, new Comparator<Car>() {
+                    @Override
+                    public int compare(com.example.debandjackie.martasense.Car car1, com.example.debandjackie.martasense.Car car2) {
+                        return car1.getNoiseLevelDecibels() > car2.getNoiseLevelDecibels() ? 1 : -1;
+                    }
+                });
+                break;
+            case NUM_PEOPLE:
+                Collections.sort(carList, new Comparator<Car>() {
+                    @Override
+                    public int compare(com.example.debandjackie.martasense.Car car1, com.example.debandjackie.martasense.Car car2) {
+                        return car1.getNumPeople() > car2.getNumPeople() ? 1 : -1;
+                    }
+                });
+                break;
+        }
+        carArrayAdapter.notifyDataSetChanged();
     }
 
 
