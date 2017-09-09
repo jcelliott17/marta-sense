@@ -30,19 +30,39 @@
             android:text="Current car:"
             android:textColor="#0193cf" />
 
-        <Spinner
-            android:id="@+id/sort_by_spinner"
-            android:layout_width="fill_parent"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_below="@id/current_car_text_view"
-            android:textColor="#0193cf"></Spinner>
+            android:id="@+id/select_sort">
+
+            <TextView
+                android:id="@+id/sort_by_text_view"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:paddingBottom="10dp"
+                android:paddingLeft="15dp"
+                android:paddingTop="10dp"
+                android:scaleX="1.0"
+                android:scaleY="1.0"
+                android:text="Sort by:"
+                android:textColor="#0193cf" />
+
+            <Spinner
+                android:id="@+id/sort_by_spinner"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/sort_by_text_view"
+                android:textColor="#0193cf"></Spinner>
+
+        </LinearLayout>
 
         <ListView
             android:id="@+id/car_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_above="@+id/share_noise_level_switch"
-            android:layout_below="@+id/sort_by_spinner"></ListView>
+            android:layout_below="@+id/select_sort"></ListView>
 
         <Switch
             android:id="@+id/share_noise_level_switch"
@@ -55,8 +75,8 @@
             android:scaleY="1.5"
             android:switchPadding="10dp"
             android:text="Share Noise Level"
-            android:thumbTextPadding="40dp"
-            android:textColor="#0193cf"/>
+            android:textColor="#0193cf"
+            android:thumbTextPadding="40dp" />
 
     </RelativeLayout>
 

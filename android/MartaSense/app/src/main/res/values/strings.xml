@@ -3,8 +3,8 @@
     <string name="sort_by_array">Sort by </string>
 
     <string-array name="sort_by_array">
-        <item>Sort by car name</item>
-        <item>Sort by number of people</item>
-        <item>Sort by noise level</item>
+        <item>car name</item>
+        <item>number of people</item>
+        <item>noise level</item>
     </string-array>
 </resources>
