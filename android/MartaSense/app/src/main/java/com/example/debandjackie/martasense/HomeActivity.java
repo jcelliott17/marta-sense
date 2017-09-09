@@ -5,7 +5,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
+import android.text.format.DateUtils;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -55,6 +55,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private Switch shareNoiseLevelSwitch;
     private TextView currentCarTextView;
+    private TextView timeTextView;
 
     private enum SortCriteria {
         NAME, NOISE_LEVEL, NUM_PEOPLE
@@ -64,12 +65,15 @@ public class HomeActivity extends AppCompatActivity {
 
     private Spinner sortBySpinner;
 
+    private int elapsedTimeSeconds = 0;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
         currentCarTextView = (TextView) findViewById(R.id.current_car_text_view);
+        timeTextView = (TextView) findViewById(R.id.time_text_view);
 
         setThisCarReference(defaultCarID);
 
@@ -207,6 +211,15 @@ public class HomeActivity extends AppCompatActivity {
         });
     }
 
+    protected void updateElapsedTimeText(final int elapsedTimeSeconds) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                timeTextView.setText(DateUtils.formatElapsedTime(elapsedTimeSeconds));
+            }
+        });
+    }
+
     @Override
     public void onRequestPermissionsResult(int requestCode,
                                            String permissions[], int[] grantResults) {
@@ -233,6 +246,8 @@ public class HomeActivity extends AppCompatActivity {
                                     thisCarNoiseReference.setValue(amplitude);
                                 }
                                 updateShareSwitchText(amplitude);
+                                elapsedTimeSeconds += soundInterval / 1000;
+                                updateElapsedTimeText(elapsedTimeSeconds);
                             }
                         }, 0, soundInterval);
 
@@ -283,4 +298,5 @@ public class HomeActivity extends AppCompatActivity {
         this.sortCriteria = sortCriteria;
         updateCarList();
     }
+
 }

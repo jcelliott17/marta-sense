@@ -78,6 +78,18 @@
             android:textColor="#0193cf"
             android:thumbTextPadding="40dp" />
 
+        <TextView
+            android:id="@+id/time_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:text=""
+            android:paddingTop="10dp"
+            android:paddingRight="10dp"
+            android:textSize="15sp"/>
+
     </RelativeLayout>
 
 
