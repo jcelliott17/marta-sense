@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
+import android.widget.TextView;
 
 import com.google.firebase.database.ChildEventListener;
 import com.google.firebase.database.DataSnapshot;
@@ -47,11 +48,14 @@ public class HomeActivity extends AppCompatActivity {
     private ListView carListView;
 
     private Switch shareNoiseLevelSwitch;
+    private TextView currentCarTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
+
+        currentCarTextView = (TextView) findViewById(R.id.current_car_text_view);
 
         setThisCarReference(defaultCarID);
 
@@ -136,6 +140,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private void setThisCarReference(String carID) {
         this.thisCarID = carID;
+        currentCarTextView.setText("Current Car: " + carID);
         thisCarReference = database.getReference().child("cars/" + carID);
         thisCarNoiseReference = thisCarReference.child("noise-level");
     }
