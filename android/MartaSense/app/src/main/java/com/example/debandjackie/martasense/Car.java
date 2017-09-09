@@ -72,12 +72,12 @@ public class Car {
         StringBuilder result = new StringBuilder("\n");
         result.append(carID);
         if (numPeople >= 0) {
-            result.append("\n\nAbout ");
+            result.append("\nAbout ");
             result.append(numPeople);
             result.append(numPeople == 1 ? " person" : " people");
         }
         if (noiseLevelDecibels > 0) {
-            result.append("\n\n");
+            result.append("\n");
             result.append(getNoiseLevelDescription(getNoiseLevelDecibels()));
             result.append(" (");
             result.append(getNoiseLevelDecibels());

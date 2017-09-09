@@ -11,6 +11,7 @@ import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.Switch;
 import android.widget.TextView;
 
@@ -22,10 +23,11 @@ import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -59,6 +61,8 @@ public class HomeActivity extends AppCompatActivity {
     }
 
     private SortCriteria sortCriteria = SortCriteria.NUM_PEOPLE;
+
+    private Spinner sortBySpinner;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -146,7 +150,36 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+        sortBySpinner = (Spinner) findViewById(R.id.sort_by_spinner);
+        final String[] sortTextArray = getResources().getStringArray(R.array.sort_by_array);
+        final Map<String, SortCriteria> sortTextMap = new HashMap<>();
+        sortTextMap.put(sortTextArray[0], SortCriteria.NAME);
+        sortTextMap.put(sortTextArray[1], SortCriteria.NUM_PEOPLE);
+        sortTextMap.put(sortTextArray[2], SortCriteria.NOISE_LEVEL);
+        ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_by_array, android.R.layout.simple_spinner_item);
+        spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sortBySpinner.setAdapter(spinnerAdapter);
+
+        sortBySpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int pos, long id) {
+                Object item = parent.getItemAtPosition(pos);
+
+                updateCarList(sortTextMap.get(item.toString()));
+
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> arg0) {
+
+            }
+        });
+
     }
+
+
 
     private void setThisCarReference(String carID) {
         this.thisCarID = carID;
@@ -160,13 +193,6 @@ public class HomeActivity extends AppCompatActivity {
         {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, SOUND_REQUEST_CODE);
         }
-//        if (ContextCompat.checkSelfPermission(this,
-//                android.Manifest.permission.RECORD_AUDIO)
-//                == PackageManager.PERMISSION_GRANTED) {
-//            Log.e("HAS_SOUND_PERMISSION", "TRUE");
-//        } else {
-//            Log.e("HAS_SOUND_PERMISSION", "FALSE");
-//        }
     }
 
     @Override
@@ -174,7 +200,6 @@ public class HomeActivity extends AppCompatActivity {
                                            String permissions[], int[] grantResults) {
         switch (requestCode) {
             case SOUND_REQUEST_CODE: {
-                // If request is cancelled, the result arrays are empty.
                 if (soundMeter != null) {
                     soundMeter.stop();
                 }
@@ -182,24 +207,16 @@ public class HomeActivity extends AppCompatActivity {
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 if (canRecordSound) {
 
-                    // permission was granted, yay! Do the
-                    // contacts-related task you need to do.
-
-                    Log.e("HAS_SOUND_PERMISSION", "TRUE");
                     soundMeter = new SoundMeter();
                     try {
                         soundMeter.start();
-
 
                         soundCheckTimer = new Timer();
 
                         soundCheckTimer.schedule(new TimerTask() {
                             @Override
                             public void run() {
-                                // do your task here
-                                Log.d("HAS_SOUND_PERMISSION", "tick");
                                 double amplitude = soundMeter.getAmplitude();
-                                Log.d("HAS_SOUND_PERMISSION", Double.toString(amplitude));
                                 if (amplitude > 0) {
                                     thisCarNoiseReference.setValue(amplitude);
                                 }
@@ -211,19 +228,11 @@ public class HomeActivity extends AppCompatActivity {
                         canRecordSound = false;
                     }
                 } else {
-
-                    // permission denied, boo! Disable the
-                    // functionality that depends on this permission.
-
-                    Log.e("HAS_SOUND_PERMISSION", "FALSE");
                     soundCheckTimer.cancel();
                     soundCheckTimer.purge();
                 }
                 shareNoiseLevelSwitch.setChecked(canRecordSound);
             }
-
-            // other 'case' lines to check for other
-            // permissions this app might request
         }
     }
 

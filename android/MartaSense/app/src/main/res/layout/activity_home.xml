@@ -29,11 +29,18 @@
             android:layout_alignParentLeft="true"
             android:layout_alignParentStart="true" />
 
+        <Spinner
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/sort_by_spinner"
+            android:layout_below="@id/current_car_text_view"
+            ></Spinner>
+
         <ListView
             android:id="@+id/car_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/current_car_text_view"
+            android:layout_below="@+id/sort_by_spinner"
             android:layout_above="@+id/share_noise_level_switch"></ListView>
 
         <Switch
