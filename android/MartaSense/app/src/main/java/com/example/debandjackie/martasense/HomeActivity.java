@@ -6,6 +6,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.widget.CompoundButton;
+import android.widget.Switch;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -20,6 +22,8 @@ public class HomeActivity extends AppCompatActivity {
     private static final int SOUND_REQUEST_CODE = 773;
     private boolean canRecordSound;
 
+    private Switch shareNoiseLevelSwitch;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,7 +31,17 @@ public class HomeActivity extends AppCompatActivity {
 
         thisCarNoiseReference = database.getReference().child("cars").child(THIS_CAR_ID).child("noise-level");
         thisCarNoiseReference.setValue("jackie-test");
-        requestSoundReporting();
+
+        shareNoiseLevelSwitch = (Switch) findViewById(R.id.share_noise_level_switch);
+        shareNoiseLevelSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                canRecordSound = b;
+                if (canRecordSound) {
+                    requestSoundReporting();
+                }
+            }
+        });
     }
 
     private void requestSoundReporting() {
@@ -50,22 +64,22 @@ public class HomeActivity extends AppCompatActivity {
         switch (requestCode) {
             case SOUND_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.
-                if (grantResults.length > 0
-                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                canRecordSound = grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                if (canRecordSound) {
 
                     // permission was granted, yay! Do the
                     // contacts-related task you need to do.
 
                     Log.e("HAS_SOUND_PERMISSION", "TRUE");
-                    canRecordSound = true;
                 } else {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
 
                     Log.e("HAS_SOUND_PERMISSION", "FALSE");
-                    canRecordSound = false;
                 }
+                shareNoiseLevelSwitch.setChecked(canRecordSound);
             }
 
             // other 'case' lines to check for other
