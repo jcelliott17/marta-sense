@@ -159,6 +159,7 @@ public class HomeActivity extends AppCompatActivity {
         sortTextMap.put(sortTextArray[0], SortCriteria.NAME);
         sortTextMap.put(sortTextArray[1], SortCriteria.NUM_PEOPLE);
         sortTextMap.put(sortTextArray[2], SortCriteria.NOISE_LEVEL);
+
         ArrayAdapter<CharSequence> spinnerAdapter = ArrayAdapter.createFromResource(this, R.array.sort_by_array, android.R.layout.simple_spinner_item);
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         sortBySpinner.setAdapter(spinnerAdapter);
@@ -201,7 +202,7 @@ public class HomeActivity extends AppCompatActivity {
         runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                shareNoiseLevelSwitch.setText(amplitude > 0 ? amplitude + " decibels - " + Car.getNoiseLevelDescription((long) amplitude) : "Sharing Noise Level...");
+                shareNoiseLevelSwitch.setText(amplitude > 0 ? amplitude + " - " + Car.getNoiseLevelDescription((long) amplitude) : "Sharing Noise Level...");
             }
         });
     }

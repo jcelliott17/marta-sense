@@ -12,41 +12,43 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toTopOf="parent" >
+        app:layout_constraintTop_toTopOf="parent">
 
 
         <TextView
+            android:id="@+id/current_car_text_view"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/current_car_text_view"
-            android:text="Current car:"
-            android:scaleX="1.5"
-            android:scaleY="1.5"
-            android:paddingTop="10dp"
+            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
+            android:layout_alignParentTop="true"
             android:paddingBottom="10dp"
             android:paddingLeft="25dp"
-            android:layout_alignParentTop="true"
-            android:layout_alignParentLeft="true"
-            android:layout_alignParentStart="true" />
+            android:paddingTop="10dp"
+            android:scaleX="1.5"
+            android:scaleY="1.5"
+            android:text="Current car:"
+            android:textColor="#0193cf" />
 
         <Spinner
+            android:id="@+id/sort_by_spinner"
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:id="@+id/sort_by_spinner"
             android:layout_below="@id/current_car_text_view"
-            ></Spinner>
+            android:textColor="#0193cf"></Spinner>
 
         <ListView
             android:id="@+id/car_list_view"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_below="@+id/sort_by_spinner"
-            android:layout_above="@+id/share_noise_level_switch"></ListView>
+            android:layout_above="@+id/share_noise_level_switch"
+            android:layout_below="@+id/sort_by_spinner"></ListView>
 
         <Switch
             android:id="@+id/share_noise_level_switch"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
             android:layout_centerHorizontal="true"
             android:padding="25dp"
             android:scaleX="1.5"
@@ -54,7 +56,7 @@
             android:switchPadding="10dp"
             android:text="Share Noise Level"
             android:thumbTextPadding="40dp"
-            android:layout_alignParentBottom="true"/>
+            android:textColor="#0193cf"/>
 
     </RelativeLayout>
 
