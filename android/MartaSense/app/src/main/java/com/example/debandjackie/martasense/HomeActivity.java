@@ -143,9 +143,12 @@ public class HomeActivity extends AppCompatActivity {
                 canRecordSound = b;
                 if (canRecordSound) {
                     requestSoundReporting();
-                } else if (soundCheckTimer != null) {
-                    soundCheckTimer.cancel();
-                    soundCheckTimer.purge();
+                } else {
+                    shareNoiseLevelSwitch.setText("Share Noise Level");
+                    if (soundCheckTimer != null) {
+                        soundCheckTimer.cancel();
+                        soundCheckTimer.purge();
+                    }
                 }
             }
         });
@@ -180,7 +183,6 @@ public class HomeActivity extends AppCompatActivity {
     }
 
 
-
     private void setThisCarReference(String carID) {
         this.thisCarID = carID;
         currentCarTextView.setText("Current Car: " + carID);
@@ -193,6 +195,15 @@ public class HomeActivity extends AppCompatActivity {
         {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, SOUND_REQUEST_CODE);
         }
+    }
+
+    protected void updateShareSwitchText(final double amplitude) {
+        runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                shareNoiseLevelSwitch.setText(amplitude > 0 ? amplitude + " decibels - " + Car.getNoiseLevelDescription((long) amplitude) : "Sharing Noise Level...");
+            }
+        });
     }
 
     @Override
@@ -220,6 +231,7 @@ public class HomeActivity extends AppCompatActivity {
                                 if (amplitude > 0) {
                                     thisCarNoiseReference.setValue(amplitude);
                                 }
+                                updateShareSwitchText(amplitude);
                             }
                         }, 0, soundInterval);
 

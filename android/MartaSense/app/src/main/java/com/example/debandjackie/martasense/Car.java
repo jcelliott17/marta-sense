@@ -79,9 +79,9 @@ public class Car {
         if (noiseLevelDecibels > 0) {
             result.append("\n");
             result.append(getNoiseLevelDescription(getNoiseLevelDecibels()));
-            result.append(" (");
+            result.append(" - ");
             result.append(getNoiseLevelDecibels());
-            result.append(" decibels)");
+            result.append(" decibels");
         }
         result.append("\n");
         return result.toString();
