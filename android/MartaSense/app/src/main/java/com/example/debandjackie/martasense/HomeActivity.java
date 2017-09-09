@@ -69,7 +69,12 @@ public class HomeActivity extends AppCompatActivity {
             public void onChildAdded(DataSnapshot dataSnapshot, String s) {
                 String carID = dataSnapshot.getKey();
                 Car newCar = new Car(carID);
-                newCar.setNoiseLevelDecibels(dataSnapshot.child("noise-level").getValue(Long.class));
+                if (dataSnapshot.child("noise-level").getValue() != null) {
+                    newCar.setNoiseLevelDecibels(dataSnapshot.child("noise-level").getValue(Long.class));
+                }
+                if (dataSnapshot.child("num-people").getValue() != null) {
+                    newCar.setNumPeople(dataSnapshot.child("num-people").getValue(Long.class));
+                }
                 carList.add(newCar);
                 arrayAdapter.notifyDataSetChanged();
             }
@@ -79,7 +84,12 @@ public class HomeActivity extends AppCompatActivity {
                 String carID = dataSnapshot.getKey();
                 Car newCar = new Car(carID);
                 carList.remove(newCar);
-                newCar.setNoiseLevelDecibels(dataSnapshot.child("noise-level").getValue(Long.class));
+                if (dataSnapshot.child("noise-level").getValue() != null) {
+                    newCar.setNoiseLevelDecibels(dataSnapshot.child("noise-level").getValue(Long.class));
+                }
+                if (dataSnapshot.child("num-people").getValue() != null) {
+                    newCar.setNumPeople(dataSnapshot.child("num-people").getValue(Long.class));
+                }
                 carList.add(newCar);
                 arrayAdapter.notifyDataSetChanged();
             }

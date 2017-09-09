@@ -10,7 +10,7 @@ public class Car {
 
     private String carID;
     private long noiseLevelDecibels;
-    private int numPeople;
+    private long numPeople;
 
     Car(String carID) {
         if (carID == null) {
@@ -33,11 +33,11 @@ public class Car {
         this.noiseLevelDecibels = noiseLevelDecibels;
     }
 
-    public int getNumPeople() {
+    public long getNumPeople() {
         return numPeople;
     }
 
-    public void setNumPeople(int numPeople) {
+    public void setNumPeople(long numPeople) {
         this.numPeople = numPeople;
     }
 
@@ -69,19 +69,21 @@ public class Car {
     }
 
     public String toString() {
-        StringBuilder result = new StringBuilder(carID);
+        StringBuilder result = new StringBuilder("\n");
+        result.append(carID);
         if (numPeople >= 0) {
-            result.append("\nAbout ");
+            result.append("\n\nAbout ");
             result.append(numPeople);
             result.append(" people");
         }
         if (noiseLevelDecibels > 0) {
-            result.append("\n");
+            result.append("\n\n");
             result.append(getNoiseLevelDescription(getNoiseLevelDecibels()));
             result.append(" (");
             result.append(getNoiseLevelDecibels());
             result.append(" decibels)");
         }
+        result.append("\n");
         return result.toString();
     }
 
