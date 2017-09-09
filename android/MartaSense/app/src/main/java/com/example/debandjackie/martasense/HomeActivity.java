@@ -12,12 +12,20 @@ import android.widget.Switch;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
+import java.io.IOException;
+import java.util.Timer;
+import java.util.TimerTask;
+
 public class HomeActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
     private DatabaseReference thisCarNoiseReference;
 
+    private SoundMeter soundMeter;
+
     private static final String THIS_CAR_ID = "car-1";
+    private static final long soundInterval = 1000;
+    private Timer soundCheckTimer;
 
     private static final int SOUND_REQUEST_CODE = 773;
     private boolean canRecordSound;
@@ -39,6 +47,9 @@ public class HomeActivity extends AppCompatActivity {
                 canRecordSound = b;
                 if (canRecordSound) {
                     requestSoundReporting();
+                } else if (soundCheckTimer != null) {
+                    soundCheckTimer.cancel();
+                    soundCheckTimer.purge();
                 }
             }
         });
@@ -64,6 +75,9 @@ public class HomeActivity extends AppCompatActivity {
         switch (requestCode) {
             case SOUND_REQUEST_CODE: {
                 // If request is cancelled, the result arrays are empty.
+                if (soundMeter != null) {
+                    soundMeter.stop();
+                }
                 canRecordSound = grantResults.length > 0
                         && grantResults[0] == PackageManager.PERMISSION_GRANTED;
                 if (canRecordSound) {
@@ -72,12 +86,36 @@ public class HomeActivity extends AppCompatActivity {
                     // contacts-related task you need to do.
 
                     Log.e("HAS_SOUND_PERMISSION", "TRUE");
+                    soundMeter = new SoundMeter();
+                    try {
+                        soundMeter.start();
+
+
+                        soundCheckTimer = new Timer();
+
+                        soundCheckTimer.schedule(new TimerTask() {
+                            @Override
+                            public void run() {
+                                // do your task here
+                                Log.d("HAS_SOUND_PERMISSION", "tick");
+                                Log.d("HAS_SOUND_PERMISSION", Double.toString(soundMeter.getAmplitude()));
+                                thisCarNoiseReference.setValue(soundMeter.getAmplitude());
+
+                            }
+                        }, 0, soundInterval);
+
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                        canRecordSound = false;
+                    }
                 } else {
 
                     // permission denied, boo! Disable the
                     // functionality that depends on this permission.
 
                     Log.e("HAS_SOUND_PERMISSION", "FALSE");
+                    soundCheckTimer.cancel();
+                    soundCheckTimer.purge();
                 }
                 shareNoiseLevelSwitch.setChecked(canRecordSound);
             }
