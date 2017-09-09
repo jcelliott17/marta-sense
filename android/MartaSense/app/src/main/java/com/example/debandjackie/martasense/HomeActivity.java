@@ -28,7 +28,7 @@ public class HomeActivity extends AppCompatActivity {
 
     private SoundMeter soundMeter;
 
-    private static final String THIS_CAR_ID = "car-1";
+    private static final String THIS_CAR_ID = "Car 1";
     private static final long soundInterval = 1000;
     private Timer soundCheckTimer;
 
@@ -46,7 +46,6 @@ public class HomeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_home);
 
         thisCarNoiseReference = database.getReference().child("cars").child(THIS_CAR_ID).child("noise-level");
-        thisCarNoiseReference.setValue("jackie-test");
 
         carListView = (ListView) findViewById(R.id.car_list_view);
         carList = new ArrayList<>();
@@ -122,9 +121,11 @@ public class HomeActivity extends AppCompatActivity {
                             public void run() {
                                 // do your task here
                                 Log.d("HAS_SOUND_PERMISSION", "tick");
-                                Log.d("HAS_SOUND_PERMISSION", Double.toString(soundMeter.getAmplitude()));
-                                thisCarNoiseReference.setValue(soundMeter.getAmplitude());
-
+                                double amplitude = soundMeter.getAmplitude();
+                                Log.d("HAS_SOUND_PERMISSION", Double.toString(amplitude));
+                                if (amplitude > 0) {
+                                    thisCarNoiseReference.setValue(amplitude);
+                                }
                             }
                         }, 0, soundInterval);
 
