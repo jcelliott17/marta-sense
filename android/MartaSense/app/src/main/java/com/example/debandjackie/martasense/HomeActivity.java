@@ -6,6 +6,8 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.CompoundButton;
 import android.widget.ListView;
@@ -58,12 +60,20 @@ public class HomeActivity extends AppCompatActivity {
 
         carListView.setAdapter(arrayAdapter);
 
+        carListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                carList.remove(i);
+                arrayAdapter.notifyDataSetChanged();
+            }
+        });
+
         shareNoiseLevelSwitch = (Switch) findViewById(R.id.share_noise_level_switch);
         shareNoiseLevelSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 carList.add("New Car" + new Random().nextInt());
-                carList.remove(1);
                 Log.e("ADDED_A_NEW_CAR", "TRUE");
                 arrayAdapter.notifyDataSetChanged();
                 canRecordSound = b;
