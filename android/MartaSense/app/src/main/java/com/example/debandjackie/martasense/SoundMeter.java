@@ -5,7 +5,9 @@ import android.media.MediaRecorder;
 import java.io.IOException;
 
 /**
- * Created by deb on 9/8/17.
+ * Checks noise level
+ *
+ * @author Deb
  */
 public class SoundMeter {
     private MediaRecorder mRecorder = null;
