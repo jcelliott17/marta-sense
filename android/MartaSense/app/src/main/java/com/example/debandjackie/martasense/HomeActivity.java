@@ -2,9 +2,9 @@ package com.example.debandjackie.martasense;
 
 import android.content.pm.PackageManager;
 import android.os.Build;
+import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -13,24 +13,30 @@ import android.widget.CompoundButton;
 import android.widget.ListView;
 import android.widget.Switch;
 
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
 
 public class HomeActivity extends AppCompatActivity {
 
     private FirebaseDatabase database = FirebaseDatabase.getInstance();
+    private DatabaseReference thisCarReference;
     private DatabaseReference thisCarNoiseReference;
+
+    private DatabaseReference allCarsReference;
 
     private SoundMeter soundMeter;
 
-    private static final String THIS_CAR_ID = "Car 2";
+    private static final String defaultCarID = "Car 1";
+    private String thisCarID;
     private static final long soundInterval = 1000;
     private Timer soundCheckTimer;
 
@@ -47,28 +53,57 @@ public class HomeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
 
-        thisCarNoiseReference = database.getReference().child("cars").child(THIS_CAR_ID).child("noise-level");
+        setThisCarReference(defaultCarID);
 
         carListView = (ListView) findViewById(R.id.car_list_view);
         carList = new ArrayList<>();
 
-        Car car1 = new Car("car1");
-        car1.setNoiseLevelDecibels(15000);
-
-        carList.add(car1);
-        carList.add(new Car("Car2"));
-
         final ArrayAdapter<Car> arrayAdapter =
-                new ArrayAdapter<>(this,android.R.layout.simple_list_item_1 , carList);
+                new ArrayAdapter<>(this, android.R.layout.simple_list_item_1, carList);
 
         carListView.setAdapter(arrayAdapter);
 
-        carListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        allCarsReference = database.getReference().child("cars");
+        allCarsReference.addChildEventListener(new ChildEventListener() {
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                String carID = dataSnapshot.getKey();
+                Car newCar = new Car(carID);
+                newCar.setNoiseLevelDecibels(dataSnapshot.child("noise-level").getValue(Long.class));
+                carList.add(newCar);
+                arrayAdapter.notifyDataSetChanged();
+            }
 
             @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                carList.remove(i);
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                String carID = dataSnapshot.getKey();
+                Car newCar = new Car(carID);
+                carList.remove(newCar);
+                newCar.setNoiseLevelDecibels(dataSnapshot.child("noise-level").getValue(Long.class));
+                carList.add(newCar);
                 arrayAdapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+        });
+
+        carListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                setThisCarReference(carList.get(i).getCarID());
             }
         });
 
@@ -76,8 +111,6 @@ public class HomeActivity extends AppCompatActivity {
         shareNoiseLevelSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                carList.add(new Car("New Car"));
-                Log.e("ADDED_A_NEW_CAR", "TRUE");
                 arrayAdapter.notifyDataSetChanged();
                 canRecordSound = b;
                 if (canRecordSound) {
@@ -89,6 +122,12 @@ public class HomeActivity extends AppCompatActivity {
             }
         });
 
+    }
+
+    private void setThisCarReference(String carID) {
+        this.thisCarID = carID;
+        thisCarReference = database.getReference().child("cars/" + carID);
+        thisCarNoiseReference = thisCarReference.child("noise-level");
     }
 
     private void requestSoundReporting() {

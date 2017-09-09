@@ -1,7 +1,5 @@
 package com.example.debandjackie.martasense;
 
-import android.util.StringBuilderPrinter;
-
 /**
  * Represents a single car
  *
@@ -11,7 +9,7 @@ import android.util.StringBuilderPrinter;
 public class Car {
 
     private String carID;
-    private int noiseLevelDecibels;
+    private long noiseLevelDecibels;
     private int numPeople;
 
     Car(String carID) {
@@ -27,11 +25,11 @@ public class Car {
         return carID;
     }
 
-    public int getNoiseLevelDecibels() {
+    public long getNoiseLevelDecibels() {
         return noiseLevelDecibels;
     }
 
-    public void setNoiseLevelDecibels(int noiseLevelDecibels) {
+    public void setNoiseLevelDecibels(long noiseLevelDecibels) {
         this.noiseLevelDecibels = noiseLevelDecibels;
     }
 
@@ -47,7 +45,7 @@ public class Car {
         return getNoiseLevelDescription(getNoiseLevelDecibels());
     }
 
-    static String getNoiseLevelDescription(int noiseLevelDecibels) {
+    static String getNoiseLevelDescription(long noiseLevelDecibels) {
         String result = "Unknown";
         if (noiseLevelDecibels > 0) {
             result = "very quiet";
@@ -72,11 +70,10 @@ public class Car {
 
     public String toString() {
         StringBuilder result = new StringBuilder(carID);
-        result.append(": ");
         if (numPeople >= 0) {
             result.append("\nAbout ");
             result.append(numPeople);
-            result.append("people");
+            result.append(" people");
         }
         if (noiseLevelDecibels > 0) {
             result.append("\n");
