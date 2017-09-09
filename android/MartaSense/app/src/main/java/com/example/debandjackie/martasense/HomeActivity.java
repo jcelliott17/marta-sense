@@ -30,14 +30,14 @@ public class HomeActivity extends AppCompatActivity {
 
     private SoundMeter soundMeter;
 
-    private static final String THIS_CAR_ID = "Car 1";
+    private static final String THIS_CAR_ID = "Car 2";
     private static final long soundInterval = 1000;
     private Timer soundCheckTimer;
 
     private static final int SOUND_REQUEST_CODE = 773;
     private boolean canRecordSound;
 
-    private List<String> carList;
+    private List<Car> carList;
     private ListView carListView;
 
     private Switch shareNoiseLevelSwitch;
@@ -52,10 +52,13 @@ public class HomeActivity extends AppCompatActivity {
         carListView = (ListView) findViewById(R.id.car_list_view);
         carList = new ArrayList<>();
 
-        carList.add("Car1");
-        carList.add("Car2");
+        Car car1 = new Car("car1");
+        car1.setNoiseLevelDecibels(15000);
 
-        final ArrayAdapter<String> arrayAdapter =
+        carList.add(car1);
+        carList.add(new Car("Car2"));
+
+        final ArrayAdapter<Car> arrayAdapter =
                 new ArrayAdapter<>(this,android.R.layout.simple_list_item_1 , carList);
 
         carListView.setAdapter(arrayAdapter);
@@ -73,7 +76,7 @@ public class HomeActivity extends AppCompatActivity {
         shareNoiseLevelSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                carList.add("New Car" + new Random().nextInt());
+                carList.add(new Car("New Car"));
                 Log.e("ADDED_A_NEW_CAR", "TRUE");
                 arrayAdapter.notifyDataSetChanged();
                 canRecordSound = b;
