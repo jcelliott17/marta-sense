@@ -1,7 +1,11 @@
 package com.example.debandjackie.martasense;
 
+import android.content.pm.PackageManager;
+import android.os.Build;
+import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.util.Log;
 
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
@@ -13,6 +17,9 @@ public class HomeActivity extends AppCompatActivity {
 
     private static final String THIS_CAR_ID = "car-1";
 
+    private static final int SOUND_REQUEST_CODE = 773;
+    private boolean canRecordSound;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -20,5 +27,49 @@ public class HomeActivity extends AppCompatActivity {
 
         thisCarNoiseReference = database.getReference().child("cars").child(THIS_CAR_ID).child("noise-level");
         thisCarNoiseReference.setValue("jackie-test");
+        requestSoundReporting();
+    }
+
+    private void requestSoundReporting() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) //check if permission request is necessary
+        {
+            ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.RECORD_AUDIO, android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, SOUND_REQUEST_CODE);
+        }
+//        if (ContextCompat.checkSelfPermission(this,
+//                android.Manifest.permission.RECORD_AUDIO)
+//                == PackageManager.PERMISSION_GRANTED) {
+//            Log.e("HAS_SOUND_PERMISSION", "TRUE");
+//        } else {
+//            Log.e("HAS_SOUND_PERMISSION", "FALSE");
+//        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode,
+                                           String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case SOUND_REQUEST_CODE: {
+                // If request is cancelled, the result arrays are empty.
+                if (grantResults.length > 0
+                        && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+
+                    // permission was granted, yay! Do the
+                    // contacts-related task you need to do.
+
+                    Log.e("HAS_SOUND_PERMISSION", "TRUE");
+                    canRecordSound = true;
+                } else {
+
+                    // permission denied, boo! Disable the
+                    // functionality that depends on this permission.
+
+                    Log.e("HAS_SOUND_PERMISSION", "FALSE");
+                    canRecordSound = false;
+                }
+            }
+
+            // other 'case' lines to check for other
+            // permissions this app might request
+        }
     }
 }
